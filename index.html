@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans:200,400,500" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style type="text/css">
+        body{
+            font-family: "Work Sans", sans-serif;
+        }
+        p{
+            font-family: Georgia,serif;
+            font-weight: 400;
+            text-shadow: 0 1px 0 #FFF;
+            font-size: 18px;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+        b.special{
+            font-weight: 500;
+            color:#9ad810;
+        }
+        a{
+            color:#9ad810;
+            text-decoration: underline;
+        }
+        .small{
+            font-weight: 200;
+            font-size: 16px;
+        }
+        .label{
+            font-size: 30px;
+            font-weight: 200;
+            line-height: 1.4;
+        }
+        .message{
+            font-size: 20px;
+            font-weight: 200;
+            line-height: 1.4;
+        }
+        #pac-input{
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-family: "Work Sans", sans-serif;
+            width: 320px;
+            font-size: 16px;
+            padding: 15px;
+            font-weight: 400;
+            color: #333333;
+        }
+        .canton {
+          fill: #bbb;
+        }
+        .canton-boundary {
+          fill: #f5f6f7;
+          stroke: #333;
+          stroke-linejoin: round;
+        }
+        #map{
+            background-color: #f5f6f7;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <div class="row" style="margin-bottom: 40px;">
+            <div class="offset-md-2 col-md-8">
+                <h1>Aliquam at urna eget ante dignissim</h1>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row" style="margin-bottom: 40px;">
+            <div class="offset-md-3 col-md-6">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus in mollis ante, ut viverra magna. Nulla nunc risus, lacinia blandit turpis sit amet, condimentum venenatis ligula. Aliquam at urna eget ante dignissim vulputate. Integer sagittis tellus in vestibulum lobortis. Integer convallis ullamcorper lacus, feugiat blandit lacus finibus sit amet.</p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12">
+                <img src="parcs.png">
+            </div>
+        </div>
+    </div>
+    <div class="container text-center">
+        <div class="row">
+            <div class="offset-md-2 col-md-8">
+                <div class="label">Saisissez votre adresse. Nous vous dirons si des eoliennes seront visibles de chez vous.</div>
+                <input id="pac-input" class="controls" type="text" placeholder="Saisissez une adresse">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-md-2 col-md-8">
+                <div class="small">Essayez par exemple <a href="#">Lausanne</a>, <a href="#">Parc de Sauvabelin</a>, <a href="#">Col des Mosses</a> ou <a href="#">Lac de Joux</a>.</div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 40px;">
+            <div class="offset-md-2 col-md-8">
+                <div class="message">Il y a de fortes chances pour que vous puissiez voir <b class="special">6 eoliennes</b> a cette adresse.</div>
+                <div class="message">Voici pourquoi:</div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgQ6KXHrB6tMqwK-xGL3FkqiTHG_7urcE&libraries=places&language=fr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script type="text/javascript">
+
+        /*
+        $("#pac-input").on("keyup", function(){
+            console.log("A")
+        })
+
+        var service = new google.maps.places.AutocompleteService();
+        service.getPlacePredictions({ input: 'Lausanne' }, function(predictions){
+            console.log(predictions)});
+        */
+
+
+        var vdBounds = [[5.93719220465601, 46.1162024335589],
+                        [7.34809579436735, 47.0150236028029]]
+
+        var width = 600,
+            height = 600;
+
+        var projection = d3.geoAlbers();
+
+        var path = d3.geoPath()
+            .projection(projection);
+
+        var svg = d3.select("body").append("svg")
+            .attr("id", "map")
+            .attr("width", width)
+            .attr("height", height);
+
+        var marker
+
+        projection
+            .rotate([0, 0])
+            .center(vdBounds[0])
+            .scale(35000)
+            .translate([0,projection(vdBounds[0])[1] - projection(vdBounds[1])[1]]);
+
+        coordinateTest = [6.8638, 46.3972009357522]
+
+        d3.json("vd_communes-quantized_topo.json", function(error, vd) {
+          if (error) throw error;
+
+          svg.append("path")
+              .datum(topojson.feature(vd, vd.objects.communes, function(a, b) { return a !== b; }))
+              .attr("class", "canton-boundary")
+              .attr("d", path);
+
+        marker = svg.append("circle")
+            .attr("cx", projection(coordinateTest)[0])
+            .attr("cy", projection(coordinateTest)[1])
+            .attr("r", 2)
+
+        bounds = svg.append("rect")
+            .attr("fill", "rgba(0,0,0,0.2)")
+            .attr("x", projection(vdBounds[0])[0])
+            .attr("y", projection(vdBounds[1])[1])
+            .attr("width", projection(vdBounds[1])[0] - projection(vdBounds[0])[0])
+            .attr("height", projection(vdBounds[0])[1] - projection(vdBounds[1])[1]);
+
+        svg.append("circle")
+            .attr("fill", "black")
+            .attr("cx", projection(vdBounds[0])[0])
+            .attr("cy", projection(vdBounds[0])[1])
+            .attr("r", 2)
+
+        svg.append("circle")
+            .attr("fill", "black")
+            .attr("cx", projection(vdBounds[1])[0])
+            .attr("cy", projection(vdBounds[1])[1])
+            .attr("r", 2)
+
+        svg.append("circle")
+            .attr("fill", "black")
+            .attr("cx", projection(vdBounds[1])[0] - (projection(vdBounds[1])[0] - projection(vdBounds[0])[0]))
+            .attr("cy", projection(vdBounds[1])[1])
+            .attr("r", 2)
+
+        svg.append("circle")
+            .attr("fill", "black")
+            .attr("cx", projection(vdBounds[1])[0])
+            .attr("cy", projection(vdBounds[1])[1] + (projection(vdBounds[0])[1] - projection(vdBounds[1])[1]))
+            .attr("r", 2)
+
+        });
+
+
+        /**
+         * Google Place autocompletion
+         */
+
+        var APIKEY = "AIzaSyBgQ6KXHrB6tMqwK-xGL3FkqiTHG_7urcE"
+        var VDBOUNDS = new google.maps.LatLngBounds(
+            new google.maps.LatLng(46.200948, 5.958882),
+            new google.maps.LatLng(47.008552, 7.312947));
+
+        var input = document.getElementById('pac-input');
+        var options = {
+            bounds: VDBOUNDS,
+            componentRestrictions: {country: 'ch'}
+        };
+
+        autocomplete = new google.maps.places.Autocomplete(input, options);
+        google.maps.event.addListener(autocomplete, 'place_changed', function(){
+
+            url = "https://maps.googleapis.com/maps/api/geocode/json?"
+                + "address=" + this.getPlace().formatted_address + "&"
+                + "key=" + APIKEY;
+
+            $.ajax({
+                url: url, 
+                type: "GET",   
+                dataType: 'json',
+                cache: false,
+                success: function(response){   
+                    var position = response.results[0].geometry.location
+                    var projectedPosition = projection([position.lng, position.lat])
+
+                    marker
+                        .attr("cx", projectedPosition[0])
+                        .attr("cy", projectedPosition[1])
+
+                    var pixelData = canvas.getContext('2d').getImageData(
+                        projectedPosition[0], projectedPosition[1], 1, 1).data;
+                    console.log(pixelData)
+
+                    ctx.fillRect(
+                        projectedPosition[0] - 2,
+                        projectedPosition[1] - 2,
+                        4,4);
+                }
+            });   
+        });
+
+
+        /**
+         * Get position value from image
+         */
+        var canvas = document.createElement('canvas');
+        var img = new Image()
+        img.src = "viewshed.jpg"
+        img.addEventListener('load', function(){
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx = canvas.getContext('2d')
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            $("body").append($(canvas));
+        });
+
+    </script>
+  </body>
+</html>
