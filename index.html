@@ -122,26 +122,28 @@
         var vdBounds = [[5.93719220465601, 46.1162024335589],
                         [7.34809579436735, 47.0150236028029]]
 
-        var width = 600,
-            height = 600;
-
-        var projection = d3.geoAlbers();
+        var projection = d3.geoMercator();
 
         var path = d3.geoPath()
             .projection(projection);
-
-        var svg = d3.select("body").append("svg")
-            .attr("id", "map")
-            .attr("width", width)
-            .attr("height", height);
 
         var marker
 
         projection
             .rotate([0, 0])
             .center(vdBounds[0])
-            .scale(35000)
+            .scale(22000)
             .translate([0,projection(vdBounds[0])[1] - projection(vdBounds[1])[1]]);
+
+        var width = 600,
+            height = width * 
+            (projection(vdBounds[0])[1] - projection(vdBounds[1])[1]) /
+            (projection(vdBounds[1])[0] - projection(vdBounds[0])[0]);
+
+        var svg = d3.select("body").append("svg")
+            .attr("id", "map")
+            .attr("width", width)
+            .attr("height", height);
 
         coordinateTest = [6.8638, 46.3972009357522]
 
