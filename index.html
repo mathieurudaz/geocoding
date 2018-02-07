@@ -118,78 +118,69 @@
             console.log(predictions)});
         */
 
-
+        var projection = d3.geoMercator();
         var vdBounds = [[5.93719220465601, 46.1162024335589],
                         [7.34809579436735, 47.0150236028029]]
 
-        var projection = d3.geoMercator();
 
         var path = d3.geoPath()
             .projection(projection);
 
         var marker
 
-        projection
-            .rotate([0, 0])
-            .center(vdBounds[0])
-            .scale(22000)
-            .translate([0,projection(vdBounds[0])[1] - projection(vdBounds[1])[1]]);
 
-        var width = 600,
+        // Fit the bounding box in the svg
+        
+        var width = 600
             height = width * 
             (projection(vdBounds[0])[1] - projection(vdBounds[1])[1]) /
             (projection(vdBounds[1])[0] - projection(vdBounds[0])[0]);
 
+        projection
+            .scale(1)
+            .translate([0, 0]);
+
+        var b = [projection(vdBounds[0]), projection(vdBounds[1])]
+            s = 1 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+            t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+        projection
+            .scale(s)
+            .translate(t);
+
+        /**
+         * Only for testing 
+         */
+
+        // Add a test map SVG container
         var svg = d3.select("body").append("svg")
             .attr("id", "map")
             .attr("width", width)
             .attr("height", height);
 
-        coordinateTest = [6.8638, 46.3972009357522]
 
+        // Load the map geometry
         d3.json("vd_communes-quantized_topo.json", function(error, vd) {
-          if (error) throw error;
+            if (error) throw error;
 
-          svg.append("path")
-              .datum(topojson.feature(vd, vd.objects.communes, function(a, b) { return a !== b; }))
-              .attr("class", "canton-boundary")
-              .attr("d", path);
+            // add the geometries to the map
+            svg.append("path")
+                .datum(topojson.feature(vd, vd.objects.communes, function(a, b) { return a !== b; }))
+                .attr("class", "canton-boundary")
+                .attr("d", path);
 
-        marker = svg.append("circle")
-            .attr("cx", projection(coordinateTest)[0])
-            .attr("cy", projection(coordinateTest)[1])
-            .attr("r", 2)
+            // Add the marker to the map
+            marker = svg.append("circle")
+                .attr("fill", "red")
+                .attr("r", 2)
 
-        bounds = svg.append("rect")
-            .attr("fill", "rgba(0,0,0,0.2)")
-            .attr("x", projection(vdBounds[0])[0])
-            .attr("y", projection(vdBounds[1])[1])
-            .attr("width", projection(vdBounds[1])[0] - projection(vdBounds[0])[0])
-            .attr("height", projection(vdBounds[0])[1] - projection(vdBounds[1])[1]);
-
-        svg.append("circle")
-            .attr("fill", "black")
-            .attr("cx", projection(vdBounds[0])[0])
-            .attr("cy", projection(vdBounds[0])[1])
-            .attr("r", 2)
-
-        svg.append("circle")
-            .attr("fill", "black")
-            .attr("cx", projection(vdBounds[1])[0])
-            .attr("cy", projection(vdBounds[1])[1])
-            .attr("r", 2)
-
-        svg.append("circle")
-            .attr("fill", "black")
-            .attr("cx", projection(vdBounds[1])[0] - (projection(vdBounds[1])[0] - projection(vdBounds[0])[0]))
-            .attr("cy", projection(vdBounds[1])[1])
-            .attr("r", 2)
-
-        svg.append("circle")
-            .attr("fill", "black")
-            .attr("cx", projection(vdBounds[1])[0])
-            .attr("cy", projection(vdBounds[1])[1] + (projection(vdBounds[0])[1] - projection(vdBounds[1])[1]))
-            .attr("r", 2)
+            // Add the boundary box to the map
+            bounds = svg.append("rect")
+                .attr("fill", "rgba(0,0,0,0.2)")
+                .attr("x", projection(vdBounds[0])[0])
+                .attr("y", projection(vdBounds[1])[1])
+                .attr("width", projection(vdBounds[1])[0] - projection(vdBounds[0])[0])
+                .attr("height", projection(vdBounds[0])[1] - projection(vdBounds[1])[1]);
 
         });
 
@@ -247,7 +238,7 @@
          */
         var canvas = document.createElement('canvas');
         var img = new Image()
-        img.src = "viewshed.jpg"
+        img.src = "viewshed.png"
         img.addEventListener('load', function(){
             canvas.width = img.width;
             canvas.height = img.height;
