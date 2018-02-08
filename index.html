@@ -59,6 +59,48 @@
         #map{
             background-color: #f5f6f7;
         }
+
+        /**
+         * Spinner
+         */
+
+         .spinner {
+              width: 40px;
+              height: 40px;
+              margin: 100px auto;
+              background-color: #333;
+
+              border-radius: 100%;  
+              -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+              animation: sk-scaleout 1.0s infinite ease-in-out;
+            }
+
+            @-webkit-keyframes sk-scaleout {
+              0% { -webkit-transform: scale(0) }
+              100% {
+                -webkit-transform: scale(1.0);
+                opacity: 0;
+              }
+            }
+
+            @keyframes sk-scaleout {
+              0% { 
+                -webkit-transform: scale(0);
+                transform: scale(0);
+              } 100% {
+                -webkit-transform: scale(1.0);
+                transform: scale(1.0);
+                opacity: 0;
+              }
+            }
+
+            /* END Spinner */
+
+            .message_container .message{ display: none; }
+            .message_container .spinner{ display: none; }
+            .message_container.loading .spinner{ display: block; }
+            .message_container.success .message{ display: block; }
+
     </style>
   </head>
   <body>
@@ -95,10 +137,10 @@
                 <div class="small">Essayez par exemple <a href="#">Lausanne</a>, <a href="#">Parc de Sauvabelin</a>, <a href="#">Col des Mosses</a> ou <a href="#">Lac de Joux</a>.</div>
             </div>
         </div>
-        <div class="row" style="margin-top: 40px;">
+        <div class="row message_container" style="margin-top: 40px;">
             <div class="offset-md-2 col-md-8">
-                <div class="message">Il y a de fortes chances pour que vous puissiez voir <b class="special">6 eoliennes</b> a cette adresse.</div>
-                <div class="message">Voici pourquoi:</div>
+                <div class="spinner"></div>
+                <div class="message">Il y a de fortes chances pour que vous puissiez voir <b class="special">6 eoliennes</b> a cette adresse. Voici pourquoi:</div>
             </div>
         </div>
     </div>
@@ -203,6 +245,8 @@
         autocomplete = new google.maps.places.Autocomplete(input, options);
         google.maps.event.addListener(autocomplete, 'place_changed', function(){
 
+            $(".message_container").addClass("loading")
+
             url = "https://maps.googleapis.com/maps/api/geocode/json?"
                 + "address=" + this.getPlace().formatted_address + "&"
                 + "key=" + APIKEY;
@@ -228,6 +272,11 @@
                         projectedPosition[0] - 2,
                         projectedPosition[1] - 2,
                         4,4);
+            
+                    $(".message_container")
+                        .removeClass("loading")
+                        .addClass("success");
+
                 }
             });   
         });
