@@ -63,6 +63,46 @@
             background-color: #f5f6f7;
         }
 
+
+        /**
+         * Viewshed
+         */
+
+        #viewshed-container{
+            display: block;
+            position: relative;
+            width: 100%;
+        }
+
+        #viewshed-map{
+            position: absolute;
+            top:0px;
+            left: 0px;
+            background-color: transparent;
+        }
+
+        #viewshed-map .canton-boundary{
+            fill: transparent;
+            stroke: #333;
+            stroke-linejoin: round;
+            stroke: transparent;
+        }
+
+        .park-circle{
+            fill: #ffffff;
+            stroke: #333333;
+            opacity: 0.95;
+            stroke-width:1px;
+            cursor: pointer;
+        }
+
+        .user-circle{
+            fill: #333333;
+            stroke: #ffffff;
+            opacity: 0.95;
+            stroke-width:1px;
+        }
+
         /**
          * Spinner
          */
@@ -103,12 +143,12 @@
           }
         }
 
-            /* END Spinner */
+        /* END Spinner */
 
-            .message_container .message{ display: none; }
-            .message_container .spinner{ display: none; }
-            .message_container.loading .spinner{ display: inline-block; }
-            .message_container.success .message{ display: inline-block; }
+        .message_container .message{ display: none; }
+        .message_container .spinner{ display: none; }
+        .message_container.loading .spinner{ display: inline-block; }
+        .message_container.success .message{ display: inline-block; }
 
     </style>
   </head>
@@ -157,8 +197,13 @@
     </div>
     <div class="container">
         <div class="row text-center">
-            <div class="col-md-12">
-                <img src="first_map-01.png">
+            <div class="offset-md-2 col-md-8">
+                <div class="viewshed-legend">
+                    
+                </div>
+                <div id="viewshed-container">
+                    <img src="viewshed_base_B.png" style="width: 100%; height: auto;">
+                </div>
             </div>
         </div>
     </div>
@@ -180,6 +225,113 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/topojson.v1.min.js"></script>
+
+    <script type="text/javascript">
+    
+        /**
+         * Viewshed
+         */
+
+        var vsProjection = d3.geoMercator();
+        var vdBounds = [[5.93719220465601, 46.1162024335589],
+                        [7.34809579436735, 47.0150236028029]]
+
+
+        var vsPath = d3.geoPath()
+            .projection(vsProjection);
+
+        var vsMarker
+
+
+        // Fit the bounding box in the svg
+        
+        var vdWidth = $("#viewshed-container").width()
+            vdHeight = vdWidth * 
+            (vsProjection(vdBounds[0])[1] - vsProjection(vdBounds[1])[1]) /
+            (vsProjection(vdBounds[1])[0] - vsProjection(vdBounds[0])[0]);
+
+        vsProjection
+            .scale(1)
+            .translate([0, 0]);
+
+        var vsb = [vsProjection(vdBounds[0]), vsProjection(vdBounds[1])]
+            vss = 1 / Math.max((vsb[1][0] - vsb[0][0]) / vdWidth, (vsb[1][1] - vsb[0][1]) / vdHeight),
+            vst = [(vdWidth - vss * (vsb[1][0] + vsb[0][0])) / 2, (vdHeight - vss * (vsb[1][1] + vsb[0][1])) / 2];
+
+        vsProjection
+            .scale(vss)
+            .translate(vst);
+
+        // Add a test map SVG container
+        var viewshedSVG = d3.select("#viewshed-container").append("svg")
+            .attr("id", "viewshed-map")
+            .attr("width", vdWidth)
+            .attr("height", vdHeight);
+
+
+        // Load the map geometry
+        d3.json("vd_communes-quantized_topo.json", function(error, vd) {
+            if (error) throw error;
+
+            // add the geometries to the map
+            /* viewshedSVG.append("path")
+                .datum(topojson.feature(vd, vd.objects.communes, function(a, b) { return a !== b; }))
+                .attr("class", "canton-boundary")
+                .attr("d", vsPath);*/
+
+            // Add the boundary box to the map
+            /*bounds = viewshedSVG.append("rect")
+                .attr("fill", "rgba(0,0,0,0.2)")
+                .attr("x", vsProjection(vdBounds[0])[0])
+                .attr("y", vsProjection(vdBounds[1])[1])
+                .attr("width", vsProjection(vdBounds[1])[0] - vsProjection(vdBounds[0])[0])
+                .attr("height", vsProjection(vdBounds[0])[1] - vsProjection(vdBounds[1])[1]);*/
+
+            // Add the marker to the map
+            vsMarker = viewshedSVG.append("circle")
+                .attr("class", "user-circle")
+                .attr("r", 2)
+
+        });
+
+        // Load the points
+        d3.json("parcs_labels-EPSG4326.geojson", function(error, vd) {
+            if (error) throw error;
+
+            // Add the circles
+            viewshedSVG.selectAll("circle")
+                .data(vd.features)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                    return vsProjection([d.geometry.coordinates[0], d.geometry.coordinates[1]])[0];
+                })
+                .attr("cy", function(d) {
+                    return vsProjection([d.geometry.coordinates[0], d.geometry.coordinates[1]])[1];
+                })
+                .attr("class", "park-circle")
+                .attr("r", 3);
+
+
+            // Add the markers labels
+            viewshedSVG.selectAll("text")
+                .data(vd.features)
+                .enter()
+                .append("text")
+                .attr("x", function(d) {
+                    return vsProjection([d.geometry.coordinates[0], d.geometry.coordinates[1]])[0];
+                })
+                .attr("y", function(d) {
+                    return vsProjection([d.geometry.coordinates[0], d.geometry.coordinates[1]])[1];
+                })
+                .attr("text", function(d) {
+                    return d.properties.attribut_6;
+                })
+
+            console.log(vd)
+        });
+    </script>
+
     <script type="text/javascript">
 
         /*
@@ -291,10 +443,15 @@
                 success: function(response){   
                     var position = response.results[0].geometry.location
                     var projectedPosition = projection([position.lng, position.lat])
+                    var vsProjectedPosition = vsProjection([position.lng, position.lat])
 
                     marker
                         .attr("cx", projectedPosition[0])
                         .attr("cy", projectedPosition[1])
+
+                    vsMarker
+                        .attr("cx", vsProjectedPosition[0])
+                        .attr("cy", vsProjectedPosition[1])
 
                     var pixelData = canvas.getContext('2d').getImageData(
                         projectedPosition[0], projectedPosition[1], 1, 1).data;
@@ -302,9 +459,9 @@
                     $("b.special").text(Math.ceil(pixelData[0]/5.44) > 0 ? Math.ceil(pixelData[0]/5.44) + " eoliennes" : "aucune eolienne")
 
                     ctx.fillRect(
-                        projectedPosition[0] - 2,
-                        projectedPosition[1] - 2,
-                        4,4);
+                        projectedPosition[0],
+                        projectedPosition[1],
+                        1,1);
             
                     $(".message_container")
                         .removeClass("loading")
