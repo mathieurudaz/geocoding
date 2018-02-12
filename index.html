@@ -18,10 +18,11 @@
         }
         b.special{
             font-weight: 500;
-            color:#9ad810;
+            color:#61c1aa;
+            font-size: 40px
         }
         a{
-            color:#9ad810;
+            color:#61c1aa;
             text-decoration: underline;
         }
         .small{
@@ -42,11 +43,13 @@
             margin-top: 20px;
             margin-bottom: 15px;
             font-family: "Work Sans", sans-serif;
-            width: 320px;
-            font-size: 16px;
+            width: 100%;
+            font-size: 22px;
             padding: 15px;
-            font-weight: 400;
+            font-weight: 200;
             color: #333333;
+            text-align: center;
+
         }
         .canton {
           fill: #bbb;
@@ -64,42 +67,48 @@
          * Spinner
          */
 
-         .spinner {
-              width: 40px;
-              height: 40px;
-              margin: 100px auto;
-              background-color: #333;
-
-              border-radius: 100%;  
-              -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
-              animation: sk-scaleout 1.0s infinite ease-in-out;
-            }
-
-            @-webkit-keyframes sk-scaleout {
-              0% { -webkit-transform: scale(0) }
-              100% {
-                -webkit-transform: scale(1.0);
-                opacity: 0;
-              }
-            }
-
-            @keyframes sk-scaleout {
-              0% { 
-                -webkit-transform: scale(0);
-                transform: scale(0);
-              } 100% {
-                -webkit-transform: scale(1.0);
-                transform: scale(1.0);
-                opacity: 0;
-              }
-            }
+        .lds-ring {
+          display: inline-block;
+          position: relative;
+          width: 64px;
+          height: 64px;
+        }
+        .lds-ring div {
+          box-sizing: border-box;
+          display: block;
+          position: absolute;
+          width: 51px;
+          height: 51px;
+          margin: 6px;
+          border: 6px solid #61c1aa;
+          border-radius: 50%;
+          animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+          border-color: #61c1aa transparent transparent transparent;
+        }
+        .lds-ring div:nth-child(1) {
+          animation-delay: -0.45s;
+        }
+        .lds-ring div:nth-child(2) {
+          animation-delay: -0.3s;
+        }
+        .lds-ring div:nth-child(3) {
+          animation-delay: -0.15s;
+        }
+        @keyframes lds-ring {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
 
             /* END Spinner */
 
             .message_container .message{ display: none; }
             .message_container .spinner{ display: none; }
-            .message_container.loading .spinner{ display: block; }
-            .message_container.success .message{ display: block; }
+            .message_container.loading .spinner{ display: inline-block; }
+            .message_container.success .message{ display: inline-block; }
 
     </style>
   </head>
@@ -118,17 +127,10 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-12">
-                <img src="parcs.png">
-            </div>
-        </div>
-    </div>
     <div class="container text-center">
         <div class="row">
             <div class="offset-md-2 col-md-8">
-                <div class="label">Saisissez votre adresse. Nous vous dirons si des eoliennes seront visibles de chez vous.</div>
+                <div class="label">Des eoliennes visibles de chez vous?</div>
                 <input id="pac-input" class="controls" type="text" placeholder="Saisissez une adresse">
             </div>
         </div>
@@ -137,10 +139,40 @@
                 <div class="small">Essayez par exemple <a href="#">Lausanne</a>, <a href="#">Parc de Sauvabelin</a>, <a href="#">Col des Mosses</a> ou <a href="#">Lac de Joux</a>.</div>
             </div>
         </div>
-        <div class="row message_container" style="margin-top: 40px;">
+        <div class="row message_container" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="offset-md-2 col-md-8">
-                <div class="spinner"></div>
-                <div class="message">Il y a de fortes chances pour que vous puissiez voir <b class="special">6 eoliennes</b> a cette adresse. Voici pourquoi:</div>
+                <div><div class="spinner lds-ring"><div></div><div></div><div></div><div></div></div></div>
+                <div class="message">A cettte adresse, il y a de fortes chances pour que vous puissiez voir
+                <br/><b class="special">6 eoliennes</b><br/>
+                <span style="text-decoration: underline;">Voici pourquoi...</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row" style="margin-bottom: 40px;">
+            <div class="offset-md-3 col-md-6">
+                <p>Aliquam at urna eget ante dignissim vulputate. Integer sagittis tellus in vestibulum lobortis. Integer convallis ullamcorper lacus, feugiat blandit lacus finibus sit amet.</p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12">
+                <img src="first_map-01.png">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12">
+                <img src="zooms-02.png">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row" style="margin-bottom: 40px;">
+            <div class="offset-md-3 col-md-6">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus in mollis ante, ut viverra magna. Nulla nunc risus, lacinia blandit turpis sit amet, condimentum venenatis ligula. Aliquam at urna eget ante dignissim vulputate. Integer sagittis tellus in vestibulum lobortis. Integer convallis ullamcorper lacus, feugiat blandit lacus finibus sit amet.</p>
             </div>
         </div>
     </div>
@@ -173,7 +205,7 @@
 
         // Fit the bounding box in the svg
         
-        var width = 600
+        var width = 2400
             height = width * 
             (projection(vdBounds[0])[1] - projection(vdBounds[1])[1]) /
             (projection(vdBounds[1])[0] - projection(vdBounds[0])[0]);
@@ -211,11 +243,6 @@
                 .attr("class", "canton-boundary")
                 .attr("d", path);
 
-            // Add the marker to the map
-            marker = svg.append("circle")
-                .attr("fill", "red")
-                .attr("r", 2)
-
             // Add the boundary box to the map
             bounds = svg.append("rect")
                 .attr("fill", "rgba(0,0,0,0.2)")
@@ -223,6 +250,11 @@
                 .attr("y", projection(vdBounds[1])[1])
                 .attr("width", projection(vdBounds[1])[0] - projection(vdBounds[0])[0])
                 .attr("height", projection(vdBounds[0])[1] - projection(vdBounds[1])[1]);
+
+            // Add the marker to the map
+            marker = svg.append("circle")
+                .attr("fill", "#ff00ff")
+                .attr("r", 2)
 
         });
 
@@ -267,6 +299,7 @@
                     var pixelData = canvas.getContext('2d').getImageData(
                         projectedPosition[0], projectedPosition[1], 1, 1).data;
                     console.log(pixelData)
+                    $("b.special").text(Math.ceil(pixelData[0]/5.44) > 0 ? Math.ceil(pixelData[0]/5.44) + " eoliennes" : "aucune eolienne")
 
                     ctx.fillRect(
                         projectedPosition[0] - 2,
@@ -292,6 +325,7 @@
             canvas.width = img.width;
             canvas.height = img.height;
             ctx = canvas.getContext('2d')
+            ctx.fillStyle = "#ff00ff";
             ctx.drawImage(img, 0, 0, img.width, img.height);
             $("body").append($(canvas));
         });
