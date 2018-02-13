@@ -103,6 +103,57 @@
             stroke-width:1px;
         }
 
+        .legend-bloc{
+            width: 120px;
+            display: inline-block;
+        }
+
+        .legend-bloc:nth-child(1){ text-align: left; }
+        .legend-bloc:nth-child(2){ text-align: center; }
+        .legend-bloc:nth-child(3){ text-align: right; }
+
+
+        .legend-bloc:nth-child(1) .legend-color{ background-color: #f5f6f7; }
+        .legend-bloc:nth-child(2) .legend-color{ background-color: #f5f6f7; }
+        .legend-bloc:nth-child(3) .legend-color{ background-color: #f5f6f7; }
+
+        .legend-bloc:nth-child(1) .legend-text{ text-align: left; }
+        .legend-bloc:nth-child(2) .legend-text{ text-align: center; }
+        .legend-bloc:nth-child(3) .legend-text{ text-align: right; }
+
+        .legend-text{
+            font-size: 14px;
+            line-height: 1.1em;
+            font-weight: bold;
+        }
+
+        .legend-subtext{
+            font-size: 14px;
+            line-height: 1.1em;
+            font-weight: 200;
+        }
+
+        .legend-sub-text{
+            width: 30px;
+            float:left;
+        }
+
+        .legend-color{
+            width: 90px;
+            height: 12px;
+            display: inline-block;
+        }
+
+        .legend-sub-color{
+            width: 30px;
+            height: 12px;
+            float: left;
+        }
+
+        .legend-sub-color:nth-child(1){ background-color: #d1e7e4; }
+        .legend-sub-color:nth-child(2){ background-color: #9fccc1; }
+        .legend-sub-color:nth-child(3){ background-color: #79b4a7; }
+
         /**
          * Spinner
          */
@@ -199,7 +250,28 @@
         <div class="row text-center">
             <div class="offset-md-2 col-md-8">
                 <div class="viewshed-legend">
-                    
+                    <div class="legend-bloc">
+                        <div class="legend-text">Nombre d'eoliennes</div>
+                        <div class="legend-color">
+                            <div class="legend-sub-color"></div>
+                            <div class="legend-sub-color"></div>
+                            <div class="legend-sub-color"></div>
+                        </div>
+                        <div class="legend-subtext">
+                            <div class="legend-sub-text"><5</div>
+                            <div class="legend-sub-text">>5</div>
+                            <div class="legend-sub-text">>15</div>
+                        </div>
+                    </div>
+                    <div class="legend-bloc">
+                        <div class="legend-text">Impact visuel</div>
+                        <div class="legend-color"></div>                        
+                    </div>
+                    <div class="legend-bloc">
+                        <div class="legend-text">Forets</div>
+                        <div class="legend-subtext">Visibilite nulle</div>
+                        <div class="legend-color"></div>
+                    </div>
                 </div>
                 <div id="viewshed-container">
                     <img src="viewshed_base_B.png" style="width: 100%; height: auto;">
@@ -290,7 +362,7 @@
             // Add the marker to the map
             vsMarker = viewshedSVG.append("circle")
                 .attr("class", "user-circle")
-                .attr("r", 2)
+                .attr("r", 3)
 
         });
 
